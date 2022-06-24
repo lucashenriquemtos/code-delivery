@@ -1,8 +1,8 @@
 package route
 
-import "errors"
 import (
 	"bufio"
+	"errors"
 	"os"
 	"strconv"
 	"strings"
@@ -19,10 +19,10 @@ type Position struct {
 	Lng float64
 }
 type PartialRoutePosition struct {
-	ID        string    `json:"routeID"`
-	ClientID  string    `json:"clientID"`
-	Positions []float64 `json:"position"`
-	Fineshed  bool      `json:"finished"`
+	ID       string    `json:"routeID"`
+	ClientID string    `json:"clientID"`
+	Position []float64 `json:"position"`
+	Fineshed bool      `json:"finished"`
 }
 
 func (r *Route) LoadPositions() error {
@@ -55,4 +55,27 @@ func (r *Route) LoadPositions() error {
 
 	}
 	return nil
+}
+func (r *Route) ExportPositions() ([]string, error) {
+	var route PartialRoutePosition
+	var result []string
+	total := len(r.Positions)
+
+	for k, v := range r.Positions {
+		route.ID = r.ID
+		route.ClientID = r.ClientID
+		route.Position = []float64{v.Lat, v.Lng}
+		route.Fineshed = false
+
+		if total-1 == k {
+			route.Fineshed = true
+		}
+		jsonRoute, err := json.Marshal(route)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, string(jsonRoute))
+	}
+
+	return result, nil
 }
