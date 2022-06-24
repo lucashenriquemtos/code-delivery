@@ -18,6 +18,12 @@ type Position struct {
 	Lat float64
 	Lng float64
 }
+type PartialRoutePosition struct {
+	ID        string    `json:"routeID"`
+	ClientID  string    `json:"clientID"`
+	Positions []float64 `json:"position"`
+	Fineshed  bool      `json:"finished"`
+}
 
 func (r *Route) LoadPositions() error {
 
@@ -46,7 +52,7 @@ func (r *Route) LoadPositions() error {
 		}
 
 		r.Positions = append(r.Positions, Position{Lat: lat, Lng: lng})
-		
+
 	}
 	return nil
 }
